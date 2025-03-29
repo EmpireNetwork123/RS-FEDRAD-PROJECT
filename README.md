@@ -14,8 +14,7 @@ RS-FEDRAD is designed to be scalable, decentralized, and resilient, making it a 
 2. [Key Contributions](#key-contributions)
 3. [Project Structure](#project-structure)
 4. [Setup Instructions](#setup-instructions)
-5. [Experimental Results](#experimental-results)
-6. [System Requirements](#system-requirements)
+5. [System Requirements](#system-requirements)
 
 ## Key Contributions
 - **TTP-Enhanced Dataset**: A novel dataset that maps ransomware features (API calls, DLL interactions) to TTPs, enhancing detection capabilities.
@@ -55,11 +54,11 @@ Step 3: Results
 Training metrics (accuracy, precision, recall, F1-score) and client-specific history are saved in the results/experiment_results directory.
 ### 3. Adversarial Training
 To train with adversarial examples, follow the same federated training setup but use the adversarial client scripts:
-## BIM Attacks: 
+#### BIM Attacks: 
 From scripts, run the adversarial-bim_run_client.py
-## FGSM Attacks:
+#### FGSM Attacks:
 From python scripts, run the adversarial-fgsm_run_client.py
-## Centralized Training
+#### Centralized Training
 For centralized training, run the centralized-run.py script, which combines all client datasets into a single repository for central training:
 Results visualizations are stored in the results/experiment_plots directory, while metrics and training history are saved in results/experiment_results.
 
