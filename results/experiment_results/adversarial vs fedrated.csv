@@ -1,0 +1,3 @@
+Mode,Accuracy,Precision,Recall,F1-score,
+Adversarial(last round),99.64,99.13,99.17,99.15,
+Federated(last round),99.9,99.22,99.12,99.13,

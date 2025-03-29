@@ -1,0 +1,30 @@
+# Configuration File for Federated Learning Experiment
+experiment:
+  name: Federated Ransomware Detection
+  description: Configurations for the CNN-LSTM model using Flower framework with TensorFlow.
+
+environment:
+  programming_language: "Python 3.12"
+  framework: "TensorFlow 2"
+  federated_server: "Flower 1.2"
+
+model:
+  architecture: "CNN-LSTM"
+  convolutional_layers: 1
+  convolutional_filters: 64
+  convolutional_kernel_size: 3
+  pooling_size: 2
+  lstm_units: 100
+  dense_layer_units: 64
+  dropout_rate: 0.5
+  output_activation: "softmax"
+
+training:
+  optimizer: "Adam"
+  learning_rate: 0.001
+  batch_size: 64
+
+notes:
+  - This configuration is optimized for ransomware detection with federated learning.
+  - The Flower server coordinates training across distributed clients.
+  - CNN-LSTM architecture combines convolutional layers for feature extraction with LSTM layers for sequence modeling.
