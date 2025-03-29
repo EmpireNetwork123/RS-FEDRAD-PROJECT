@@ -48,30 +48,24 @@ python src/start_server.py
 By default, the server is configured for 10 clients. You can modify the number of clients and training rounds in start_server.py.
 
 Step 2: Start Clients
-In parallel, run the following command for each client:
-run: python scripts/run_federated-client.py
-Training begins once at least 2 clients have connected, and it continues as more clients join.
+In parallel, from the python scripts folder run_federated-client.py
+Training begins once at least 2 clients have connected untill the last client
 
 Step 3: Results
 Training metrics (accuracy, precision, recall, F1-score) and client-specific history are saved in the results/experiment_results directory.
 ### 3. Adversarial Training
 To train with adversarial examples, follow the same federated training setup but use the adversarial client scripts:
-BIM Attacks:
-Copypython scripts/adversarial-bim_run_client.py
-FGSM Attacks:
-Copy
-python scripts/adversarial-fgsm_run_client.py
-Centralized Training
+## BIM Attacks: 
+From scripts, run the adversarial-bim_run_client.py
+## FGSM Attacks:
+From python scripts, run the adversarial-fgsm_run_client.py
+## Centralized Training
 For centralized training, run the centralized-run.py script, which combines all client datasets into a single repository for central training:
-Copy
-python scripts/centralized-run.py
-
 Results visualizations are stored in the results/experiment_plots directory, while metrics and training history are saved in results/experiment_results.
 
-System Requirements
+## System Requirements
 Python: 3.9+
 Dependencies:
-Copy
 pip install -r requirements.txt
 Required packages:
 flwr==1.2.0
