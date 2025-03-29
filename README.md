@@ -64,12 +64,10 @@ For centralized training, run the centralized-run.py script, which combines all 
 Results visualizations are stored in the results/experiment_plots directory, while metrics and training history are saved in results/experiment_results.
 
 ## System Requirements
-Python: 3.9+
-Dependencies:
-pip install -r requirements.txt
-Required packages:
-flwr==1.2.0
-tensorflow==2.10.0
-numpy==1.23.5
-pandas==1.5.3
-scikit-learn==1.2.2
+
+- **Python**: 3.9+
+- **Dependencies**:
+  To install the required dependencies, run the following command:
+  ```bash
+  pip install -r requirements.txt
+
