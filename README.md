@@ -31,10 +31,51 @@ The repository contains the following key directories:
 - **data/**: Placeholder for the TTP-enhanced dataset used in experiments.
 
 ## Setup Instructions
-
 ### 1. Data Preprocessing
 Navigate to the `src` folder and run the following script to preprocess the dataset:
-
 Run the following in your terminal to preprocess the data:
-```bash
 python src/data_preprocessing.py
+
+This script performs:
+Standardization, shuffling, and splitting of the dataset.
+Creation of 10 client-specific datasets for federated training.
+The number of clients can be adjusted for scalability.
+
+### 2. Federated Training
+Step 1: Initialize the Flower Server
+Run the server script:
+python src/start_server.py
+By default, the server is configured for 10 clients. You can modify the number of clients and training rounds in start_server.py.
+
+Step 2: Start Clients
+In parallel, run the following command for each client:
+run: python scripts/run_federated-client.py
+Training begins once at least 2 clients have connected, and it continues as more clients join.
+
+Step 3: Results
+Training metrics (accuracy, precision, recall, F1-score) and client-specific history are saved in the results/experiment_results directory.
+### 3. Adversarial Training
+To train with adversarial examples, follow the same federated training setup but use the adversarial client scripts:
+BIM Attacks:
+Copypython scripts/adversarial-bim_run_client.py
+FGSM Attacks:
+Copy
+python scripts/adversarial-fgsm_run_client.py
+Centralized Training
+For centralized training, run the centralized-run.py script, which combines all client datasets into a single repository for central training:
+Copy
+python scripts/centralized-run.py
+
+Results visualizations are stored in the results/experiment_plots directory, while metrics and training history are saved in results/experiment_results.
+
+System Requirements
+Python: 3.9+
+Dependencies:
+Copy
+pip install -r requirements.txt
+Required packages:
+flwr==1.2.0
+tensorflow==2.10.0
+numpy==1.23.5
+pandas==1.5.3
+scikit-learn==1.2.2
