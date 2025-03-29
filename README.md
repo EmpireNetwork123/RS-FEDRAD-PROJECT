@@ -54,11 +54,11 @@ Step 3: Results
 Training metrics (accuracy, precision, recall, F1-score) and client-specific history are saved in the results/experiment_results directory.
 ### 3. Adversarial Training
 To train with adversarial examples, follow the same federated training setup but use the adversarial client scripts:
-#### BIM Attacks: 
+#### A.BIM Attacks: 
 From scripts, run the adversarial-bim_run_client.py
-#### FGSM Attacks:
+#### B.FGSM Attacks:
 From python scripts, run the adversarial-fgsm_run_client.py
-#### Centralized Training
+#### C.Centralized Training
 For centralized training, run the centralized-run.py script, which combines all client datasets into a single repository for central training:
 Results visualizations are stored in the results/experiment_plots directory, while metrics and training history are saved in results/experiment_results.
 
