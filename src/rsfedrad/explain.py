@@ -17,6 +17,7 @@ TTP-enhanced feature space:
 """
 import argparse
 import json
+import re
 from pathlib import Path
 
 import matplotlib
@@ -35,9 +36,8 @@ from rsfedrad.data import load_client
 from rsfedrad.model import load_global_model
 
 EMPTY = "<empty>"
-GROUP_COLORS = {"ApiCall": "#4C72B0", "Dll": "#DD8452", "Mutex": "#55A868", "TTP": "#C44E52"}
-GROUP_LABELS = {"ApiCall": "API calls", "Dll": "DLLs", "Mutex": "Mutexes", "TTP": "TTPs"}
-RANSOM_COLOR, BENIGN_COLOR = "#C44E52", "#4C72B0"
+GROUPS = ("ApiCall", "Dll", "Mutex", "TTP")
+EMPTY_LABELS = {"ApiCall": "(no API call)", "Dll": "(no DLL)", "Mutex": "(no mutex)", "TTP": "(no technique)"}
 
 # MITRE ATT&CK techniques present in the TTP-enhanced dataset
 ATTACK_TECHNIQUES = {
@@ -77,7 +77,8 @@ def pretty(name):
 
 
 def save(fig, name, out_dir):
-    fig.savefig(out_dir / name, dpi=200, bbox_inches="tight")
+    for ext in ("png", "pdf"):
+        fig.savefig(out_dir / f"{name}.{ext}", dpi=300, bbox_inches="tight")
     plt.close(fig)
 
 
@@ -173,26 +174,10 @@ def lime_explanations(model, clients, preds, cfg, out_dir):
                           "feature": names[j], "value": token(c, case.row, j), "weight": w,
                           "local_r2": round(score, 3)})
         records.extend(items)
-        plot_lime_case(items, case_no, kind, case, out_dir)
 
     df = pd.DataFrame(records)
     df.to_csv(out_dir / "lime_explanations.csv", index=False)
     return df
-
-
-def plot_lime_case(items, case_no, kind, case, out_dir):
-    items = items[::-1]
-    labels = [f"{pretty(it['feature'])} = {shorten(it['value'], 40)}" for it in items]
-    w = [it["weight"] for it in items]
-    fig, ax = plt.subplots(figsize=(7.5, 0.42 * len(items) + 1.2))
-    ax.barh(np.arange(len(w)), w, color=[RANSOM_COLOR if v > 0 else BENIGN_COLOR for v in w])
-    ax.set_yticks(np.arange(len(w)), labels)
-    ax.axvline(0, color="black", lw=0.8)
-    ax.set_xlabel("LIME weight on log-odds  (< 0 benign  |  ransomware > 0)")
-    ax.set_title(f"Case {case_no}: {kind}\ntrue class {config.CLASS_NAMES[case.label]}, "
-                 f"P(ransomware) = {case.prob:.3f}", fontsize=10)
-    ax.tick_params(axis="y", labelsize=8)
-    save(fig, f"lime_case_{case_no}.png", out_dir)
 
 
 # --------------------------------------------------------------------- SHAP
@@ -241,24 +226,6 @@ def location_importance(values, sample, out_dir):
                         "mean_shap_ransomware": values[sample.label.values == 1].mean(axis=0),
                         "mean_shap_benign": values[sample.label.values == 0].mean(axis=0)})
     loc.to_csv(out_dir / "shap_location_importance.csv", index=False)
-
-    fig, ax = plt.subplots(figsize=(11, 3.6))
-    for g, color in GROUP_COLORS.items():
-        m = groups == g
-        ax.bar(np.where(m)[0], importance[m], color=color, width=1.0, label=GROUP_LABELS[g])
-    ax.set_xlim(-2, len(names) + 1)
-    ax.set_xlabel("Position in the concatenated sequence")
-    ax.set_ylabel("mean |SHAP value| (logit)")
-    ax.set_title("Location-based global explanation")
-    ax.legend(ncol=4, fontsize=8, frameon=False)
-    save(fig, "shap_location_importance.png", out_dir)
-
-    top = loc.sort_values("mean_abs_shap", ascending=False).head(20)[::-1]
-    fig, ax = plt.subplots(figsize=(6.5, 6))
-    ax.barh([pretty(f) for f in top.feature], top.mean_abs_shap, color=[GROUP_COLORS[g] for g in top.group])
-    ax.set_xlabel("mean |SHAP value|")
-    ax.set_title("Twenty most influential positions")
-    save(fig, "shap_top_positions.png", out_dir)
     return loc
 
 
@@ -266,7 +233,7 @@ def group_contribution(values, sample, out_dir):
     names = config.feature_names()
     groups = np.array([config.group_of(n) for n in names])
     rows = []
-    for g in GROUP_COLORS:
+    for g in GROUPS:
         m = groups == g
         abs_total = np.abs(values[:, m]).sum(axis=1)
         rows.append({
@@ -279,17 +246,6 @@ def group_contribution(values, sample, out_dir):
         })
     df = pd.DataFrame(rows)
     df.to_csv(out_dir / "shap_group_contribution.csv", index=False)
-
-    fig, axes = plt.subplots(1, 2, figsize=(11, 3.6))
-    labels = [GROUP_LABELS[g] for g in df.group]
-    colors = [GROUP_COLORS[g] for g in df.group]
-    axes[0].bar(labels, df.share_of_total_abs_shap * 100, color=colors)
-    axes[0].set_ylabel("share of total |SHAP| (%)")
-    axes[0].set_title("Share of the decision per feature group")
-    axes[1].bar(labels, df.mean_abs_shap_per_position, color=colors)
-    axes[1].set_ylabel("mean |SHAP| per position")
-    axes[1].set_title("Influence of a single position")
-    save(fig, "shap_group_contribution.png", out_dir)
     return df
 
 
@@ -309,40 +265,113 @@ def token_attributions(values, sample, clients, out_dir, min_count=20):
     agg = agg[agg["count"] >= min_count].sort_values("mean_shap", ascending=False)
     agg.to_csv(out_dir / "shap_value_attributions.csv", index=False)
 
-    plot_value_attributions(agg, out_dir)
-    return agg
-
-
-def shorten(text, width=34):
-    return text if len(text) <= width else f"{text[:width - 12]}...{text[-9:]}"
-
-
-def plot_value_attributions(agg, out_dir):
-    fig, axes = plt.subplots(1, 3, figsize=(16, 5.5))
-    for ax, g in zip(axes, ["ApiCall", "Dll", "Mutex"]):
-        sub = agg[(agg.group == g) & (agg.value != EMPTY)]
-        top = pd.concat([sub.head(8), sub.tail(8)]).drop_duplicates()[::-1]
-        y = np.arange(len(top))
-        ax.barh(y, top.mean_shap, color=[RANSOM_COLOR if v > 0 else BENIGN_COLOR for v in top.mean_shap])
-        ax.set_yticks(y, [shorten(v) for v in top.value], fontsize=8)
-        ax.axvline(0, color="black", lw=0.8)
-        ax.set_title(GROUP_LABELS[g])
-        ax.set_xlabel("mean SHAP value (logit)")
-    fig.suptitle("Feature-based global explanation (> 0 ransomware, < 0 benign)", y=1.01)
-    fig.tight_layout()
-    save(fig, "shap_value_attributions.png", out_dir)
-
     ttp = agg[agg.group == "TTP"].copy()
     ttp["technique"] = ttp.value.map(lambda v: f"{v} {ATTACK_TECHNIQUES[v]}" if v in ATTACK_TECHNIQUES else v)
     ttp.to_csv(out_dir / "shap_ttp_techniques.csv", index=False)
-    ttp = ttp[::-1]
-    fig, ax = plt.subplots(figsize=(7.5, 0.38 * len(ttp) + 1.2))
-    ax.barh(ttp.technique, ttp.mean_shap,
-            color=[RANSOM_COLOR if v > 0 else BENIGN_COLOR for v in ttp.mean_shap])
-    ax.axvline(0, color="black", lw=0.8)
-    ax.set_xlabel("mean SHAP value on logit  (< 0 benign  |  ransomware > 0)")
-    ax.set_title("Contribution of MITRE ATT&CK techniques")
-    save(fig, "shap_ttp_techniques.png", out_dir)
+    return agg
+
+
+# ------------------------------------------------------------------ figures
+def display_value(group, value, width=30):
+    """Readable label of an API call, DLL, mutex or technique."""
+    if value == EMPTY:
+        return EMPTY_LABELS[group]
+    if group == "Dll":
+        value = re.sub(r"dll$", ".dll", value, flags=re.IGNORECASE)
+    if group == "TTP" and value in ATTACK_TECHNIQUES:
+        value = f"{value} {ATTACK_TECHNIQUES[value]}"
+    elif group == "TTP":
+        value = f"{value} (TTP tag)"
+    return value if len(value) <= width else value[:width - 1] + "…"
+
+
+def lime_figure(lime_df, out_dir, cases=(1, 3, 8, 6), num_features=6):
+    """Local explanations in the layout of XRan (Figs. 7 and 8)."""
+    support, contradict = "#2ca02c", "#d62728"
+    fig, axes = plt.subplots(2, 2, figsize=(10, 5.6))
+    for ax, case_no, letter in zip(axes.ravel(), cases, "abcd"):
+        rows = lime_df[lime_df.case == case_no].head(num_features)[::-1]
+        p = rows.p_ransomware.iloc[0]
+        pred = "Ransomware" if p > 0.5 else "Benign"
+        group = rows.feature.map(config.group_of)
+        labels = [f"{display_value(g, v, 34)}  [{pretty(f)}]" for g, v, f in zip(group, rows.value, rows.feature)]
+        supports = (rows.weight > 0) == (pred == "Ransomware")
+        y = np.arange(len(rows))
+        ax.barh(y, rows.weight, color=np.where(supports, support, contradict), height=0.6)
+        ax.set_yticks(y, labels, fontsize=7.5)
+        ax.axvline(0, color="#444444", lw=0.6)
+        ax.tick_params(axis="x", labelsize=7.5)
+        ax.set_title(f"Case {case_no}: {rows.label.iloc[0]} sample\nModel's prediction: {pred} [{p:.4f}]",
+                     fontsize=8.5)
+        ax.text(0.5, -0.2, f"({letter})", transform=ax.transAxes, ha="center", va="top", fontsize=9)
+    handles = [plt.Rectangle((0, 0), 1, 1, color=support), plt.Rectangle((0, 0), 1, 1, color=contradict)]
+    fig.legend(handles, ["Supports model's decision", "Contradicts model's decision"],
+               loc="lower center", ncol=2, frameon=False, fontsize=8.5, bbox_to_anchor=(0.5, -0.04))
+    fig.tight_layout(h_pad=2.2, w_pad=2.0)
+    save(fig, "fig_lime_local_explanations", out_dir)
+
+
+def location_figure(values, out_dir, max_display=20):
+    """Mean |SHAP| of the most influential positions (XRan, Fig. 11)."""
+    names = [pretty(n) for n in config.feature_names()]
+    shap.summary_plot(values, feature_names=names, plot_type="bar", max_display=max_display,
+                      color="#ff9f1c", show=False, plot_size=(6.4, 5.2))
+    fig = plt.gcf()
+    fig.axes[0].tick_params(labelsize=8.5)
+    fig.axes[0].set_xlabel("mean(|SHAP value|) (average impact on model output magnitude)", fontsize=9)
+    save(fig, "fig_shap_location_based", out_dir)
+
+
+def token_matrix(values, sample, clients):
+    """SHAP values summed per observed API call, DLL, mutex and technique of each sample."""
+    names = config.feature_names()
+    groups = [config.group_of(n) for n in names]
+    by_id = {c.client_id: c for c in clients}
+    index, rows = {}, []
+    for i, r in enumerate(sample.itertuples()):
+        c = by_id[r.client]
+        row = c.idx_test[r.pos]
+        for j, g in enumerate(groups):
+            k = index.setdefault((g, token(c, row, j)), len(index))
+            rows.append((i, k, values[i, j]))
+    M = np.zeros((len(sample), len(index)))
+    for i, k, v in rows:
+        M[i, k] += v
+    labels = [display_value(g, v) for g, v in index]
+    return M, labels
+
+
+def feature_figure(values, sample, clients, out_dir, max_display=10):
+    """Most representative features of each class (XRan, Fig. 13)."""
+    M, labels = token_matrix(values, sample, clients)
+    fig, axes = plt.subplots(1, 2, figsize=(13, 4.6))
+    for ax, label, letter in zip(axes, (1, 0), "ab"):
+        rows = M[sample.label.values == label]
+        expl = shap.Explanation(values=rows.mean(axis=0), feature_names=labels)
+        shap.plots.bar(expl, max_display=max_display, ax=ax, show=False)
+        lo, hi = ax.get_xlim()
+        ax.set_xlim(lo - 0.18 * (hi - lo), hi + 0.08 * (hi - lo))
+        for t in ax.texts:
+            t.set_fontsize(8)
+        ax.set_xlabel("mean(SHAP value) on the logit", fontsize=9)
+        ax.tick_params(labelsize=8.5)
+        ax.text(0.5, -0.16, f"({letter}) {config.CLASS_NAMES[label]} class", transform=ax.transAxes,
+                ha="center", va="top", fontsize=10)
+    fig.tight_layout(w_pad=4)
+    save(fig, "fig_shap_feature_based", out_dir)
+
+
+def make_figures(out_dir, clients=None, cfg=None):
+    lime_df = pd.read_csv(out_dir / "lime_explanations.csv")
+    values = np.load(out_dir / "shap_values.npy")
+    sample = pd.read_csv(out_dir / "shap_samples.csv")
+    if clients is None:
+        d = cfg["data"]
+        clients = [load_client(i, d["num_clients"], d["clients_dir"], d["test_size"], d["seed"])
+                   for i in range(1, d["num_clients"] + 1)]
+    lime_figure(lime_df, out_dir)
+    location_figure(values, out_dir)
+    feature_figure(values, sample, clients, out_dir)
 
 
 # --------------------------------------------------------------------- main
@@ -351,6 +380,8 @@ def main():
     parser.add_argument("--model", default=None, help="path to global model weights")
     parser.add_argument("--out-dir", default=str(config.XAI_DIR))
     parser.add_argument("--config", default=str(config.CONFIG_PATH))
+    parser.add_argument("--figures-only", action="store_true",
+                        help="redraw the figures from the saved explanations")
     args = parser.parse_args()
 
     cfg = config.load_config(args.config)
@@ -361,6 +392,9 @@ def main():
 
     clients = [load_client(i, d["num_clients"], d["clients_dir"], d["test_size"], d["seed"])
                for i in range(1, d["num_clients"] + 1)]
+    if args.figures_only:
+        make_figures(out_dir, clients)
+        return
     model = load_global_model(args.model or cfg["explainability"]["model_path"], cfg)
 
     preds = collect_test_predictions(model, clients)
@@ -386,6 +420,7 @@ def main():
     summary["shap_completeness_correlation"] = round(completeness, 4)
     summary["group_share_of_abs_shap"] = dict(zip(groups.group, groups.share_of_total_abs_shap.round(4)))
     (out_dir / "summary.json").write_text(json.dumps(summary, indent=2))
+    make_figures(out_dir, clients)
 
 
 if __name__ == "__main__":

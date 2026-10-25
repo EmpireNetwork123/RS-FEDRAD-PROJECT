@@ -9,7 +9,8 @@ This repository contains the implementation, data, trained model and results of 
 We additionally provide an explainability study with LIME and SHAP that shows which behaviours and which ATT&CK techniques drive the decisions of the federated model.
 
 <p align="center">
-  <img src="results/figures/federated_rounds.png" alt="RS-FEDRAD performance across federated rounds" width="620"/>
+  <img src="results/figures/fig1_rsfedrad_workflow.png" alt="General workflow of RS-FEDRAD" width="820"/>
+  <br><em>General workflow of RS-FEDRAD (Fig. 1 of the article).</em>
 </p>
 
 ## Contents
@@ -92,6 +93,11 @@ All numbers below are those reported in the article. The per-round results are r
 | 10 | **99.90** | **99.22** | **99.12** | **99.13** |
 | Mean | 99.52 | 98.54 | 98.69 | 98.63 |
 
+<p align="center">
+  <img src="results/figures/fig3_performance_across_rounds.png" alt="Performance across federated rounds" width="520"/>
+  <br><em>Performance across the ten federated rounds (Fig. 3 of the article).</em>
+</p>
+
 Repeated training runs give a mean accuracy of 99.507% (SD 0.035), precision 98.539% (SD 0.044), recall 98.695% (SD 0.050), F1-score 98.622% (SD 0.047) and AUC-ROC 99.59% (SD 0.032).
 
 ### Aggregation strategies
@@ -99,9 +105,14 @@ Repeated training runs give a mean accuracy of 99.507% (SD 0.035), precision 98.
 | Strategy | Accuracy | Precision | Recall | F1-score |
 |---|---:|---:|---:|---:|
 | **FedAvg** | **99.52** | **98.54** | **98.69** | **98.63** |
-| FedProx | 99.32 | 98.35 | 98.50 | 98.43 |
-| FedAvgM | 99.22 | 98.25 | 98.40 | 98.34 |
-| FedMedian | 99.12 | 98.15 | 98.30 | 98.24 |
+| FedProx | 99.37 | 98.48 | 98.65 | 98.56 |
+| FedAvgM | 99.36 | 98.46 | 98.64 | 98.55 |
+| FedMedian | 99.36 | 98.45 | 98.63 | 98.54 |
+
+<p align="center">
+  <img src="results/figures/fig4_aggregation_strategies.png" alt="Aggregation strategies" width="480"/>
+  <br><em>Average performance of the aggregation strategies (Fig. 4 of the article).</em>
+</p>
 
 FedAvg performs best on our client distribution, which is close to IID. FedProx's proximal term and FedAvgM's server momentum bring no benefit here. FedMedian trades a little accuracy for robustness to outlying client updates.
 
@@ -115,6 +126,11 @@ FedAvg performs best on our client distribution, which is close to IID. FedProx'
 
 Federated training matches the centralised model while keeping the data on the clients. Adding FGSM and BIM examples to the local training data lowers accuracy by only 0.26 percentage points.
 
+<p align="center">
+  <img src="results/figures/fig5_federated_vs_adversarial.png" alt="Federated versus adversarial training" width="480"/>
+  <br><em>Federated versus adversarial training (Fig. 5 of the article).</em>
+</p>
+
 ### Scalability
 
 | Clients | Accuracy | Precision | Recall | F1-score |
@@ -126,11 +142,11 @@ Federated training matches the centralised model while keeping the data on the c
 Accuracy stays between 99.50% and 99.57% as the number of participants doubles.
 
 <p align="center">
-  <img src="results/figures/aggregation_strategies.png" alt="Aggregation strategies" width="420"/>
-  <img src="results/figures/scalability.png" alt="Scalability" width="380"/>
+  <img src="results/figures/fig6_scalability.png" alt="Scalability across client counts" width="480"/>
+  <br><em>Scalability across 10, 15 and 20 clients (Fig. 6 of the article).</em>
 </p>
 
-Comparisons with deep learning and federated detectors from the literature are shown in [`comparison_deep_learning.png`](results/figures/comparison_deep_learning.png) and [`comparison_federated.png`](results/figures/comparison_federated.png).
+Comparisons with deep learning and federated detectors from the literature are given in Figs. 7 and 8 of the article.
 
 ## Explainability with LIME and SHAP
 
@@ -155,16 +171,15 @@ The ten TTP positions carry more than half of every decision. A single TTP posit
 Inside the API block, 86% of the attribution falls on the last 70 positions (430 to 499) and almost none on the first 100. This differs from XRan, where the earliest API calls dominated. Two properties of our setting explain it. First, these positions record whether a trace is long enough to reach them. Second, the LSTM reads the sequence from left to right, so events close to the DLL, mutex and TTP blocks lie nearest to its final state.
 
 <p align="center">
-  <img src="results/explainability/shap_location_importance.png" alt="Location-based SHAP explanation" width="760"/>
-</p>
-<p align="center">
-  <img src="results/explainability/shap_group_contribution.png" alt="Share of the decision per feature group" width="640"/>
+  <img src="results/explainability/fig_shap_location_based.png" alt="Location-based SHAP explanation" width="460"/>
+  <br><em>Location-based global explanation: the twenty most influential positions of the sequence.</em>
 </p>
 
 ### Which techniques and behaviours point to ransomware
 
 <p align="center">
-  <img src="results/explainability/shap_ttp_techniques.png" alt="SHAP contribution of ATT&CK techniques" width="520"/>
+  <img src="results/explainability/fig_shap_feature_based.png" alt="Feature-based SHAP explanation" width="900"/>
+  <br><em>Feature-based global explanation of (a) the ransomware class and (b) the benign class. Each bar is the mean SHAP value of an API call, DLL, mutex or technique over the samples of the class. "(no ...)" stands for empty positions, and "TTP tag" marks the Unknown and Benign labels of the TTP block.</em>
 </p>
 
 **Techniques.** The techniques with the largest positive contributions are:
@@ -184,11 +199,7 @@ The signs agree with the data. In the TTP-enhanced dataset, benign and ransomwar
 * **Mutexes:** `RasPbFile`, `LocalZonesLockedCacheCounterMutex` and the Media Center `MCStoreSyncMem` mutexes;
 * **API calls:** `NtDelayExecution`, often used to stall sandbox analysis, together with the file-metadata calls `GetFileSizeEx`, `GetFileInformationByHandleEx` and `SetFileTime`, which are typical of the file enumeration and tampering that accompany encryption.
 
-Benign evidence comes from GUI and versioning libraries (`COMCTL32.dll`, `VERSION.dll`) and Explorer thumbnail-cache mutexes. XRan also reported `Sechost.dll` and the Zones cache mutexes. That overlap is consistent with our use of the same underlying traces.
-
-<p align="center">
-  <img src="results/explainability/shap_value_attributions.png" alt="Feature-based SHAP explanation" width="900"/>
-</p>
+Benign evidence comes from GUI and versioning libraries (`COMCTL32.dll`, `VERSION.dll`) and Explorer thumbnail-cache mutexes. XRan also reported `Sechost.dll` and the Zones cache mutexes. That overlap is consistent with our use of the same underlying traces. The attribution of every value is listed in [`shap_value_attributions.csv`](results/explainability/shap_value_attributions.csv).
 
 ### Local explanations of correct and incorrect decisions
 
@@ -211,8 +222,8 @@ The errors are informative.
 This mirrors the observation in XRan that individual indicators can mislead the detector when they are read in isolation. It also indicates where the TTP mapping could be refined: a finer split of T1106 by the native calls behind it would remove the main source of missed detections.
 
 <p align="center">
-  <img src="results/explainability/lime_case_8.png" alt="LIME explanation of a missed ransomware sample" width="520"/>
-  <img src="results/explainability/lime_case_6.png" alt="LIME explanation of a false positive" width="520"/>
+  <img src="results/explainability/fig_lime_local_explanations.png" alt="LIME explanations of correct and incorrect decisions" width="900"/>
+  <br><em>LIME explanations of (a) a correctly classified ransomware sample, (b) a correctly classified benign sample, (c) a missed ransomware sample and (d) a benign sample flagged as ransomware. The value in brackets is the predicted probability of ransomware, and the square brackets give the position of each event.</em>
 </p>
 
 All explanations, attribution tables and figures are in [`results/explainability/`](results/explainability). They are discussed in [`notebooks/03_explainability.ipynb`](notebooks/03_explainability.ipynb) and reproduced with `python -m rsfedrad.explain`.
@@ -233,7 +244,7 @@ RS-FEDRAD-PROJECT/
 │   └── 03_explainability.ipynb
 ├── results/
 │   ├── tables/                    # reported results (CSV)
-│   ├── figures/                   # result figures
+│   ├── figures/                   # figures of the article
 │   ├── logs/federated/            # original per-client training logs
 │   └── explainability/            # LIME and SHAP outputs
 ├── src/rsfedrad/
@@ -246,8 +257,7 @@ RS-FEDRAD-PROJECT/
 │   ├── centralized.py             # centralised baseline
 │   ├── adversarial.py             # FGSM and BIM
 │   ├── aggregate_logs.py          # rebuilds the round-wise results from client logs
-│   ├── explain.py                 # LIME and SHAP analysis
-│   └── plots.py                   # result figures
+│   └── explain.py                 # LIME and SHAP analysis
 └── tests/
 ```
 
@@ -270,11 +280,10 @@ The original experiments ran with Python 3.12, TensorFlow 2 and Flower on a lapt
 
 All commands are run from the repository root.
 
-**Reported results and figures**
+**Reported results**
 
 ```bash
 python -m rsfedrad.aggregate_logs        # per-round table from the client logs
-python -m rsfedrad.plots                 # figures in results/figures
 ```
 
 **Federated training**, one terminal for the server and one per client:
@@ -300,6 +309,7 @@ New runs write their logs and global models to `runs/`. Retraining on other hard
 
 ```bash
 python -m rsfedrad.explain               # about 20 minutes on a laptop CPU
+python -m rsfedrad.explain --figures-only    # redraw the figures from the saved explanations
 ```
 
 **Tests**
