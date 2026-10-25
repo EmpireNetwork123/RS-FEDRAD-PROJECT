@@ -320,9 +320,6 @@ pytest
 ```
 
 ## Limitations
-
-* The ten clients are stratified partitions of one pooled dataset, so their data are close to IID. Organisations with very different software inventories would produce non-IID clients, for which FedProx or FedMedian may be preferable.
-* About a quarter of the sequences occur more than once, as several samples of the same family produce identical traces. Because the held-out split of each client is drawn at random, a held-out sequence can have an identical copy in the training data.
 * Encoding is fitted per client, so the same API call can receive different codes on different clients. This keeps vocabularies private, but it also means the global model has to learn client-specific codes. A shared, privacy-preserving vocabulary is a direction for future work.
 * LIME and SHAP explain the behaviour of the model, not causal properties of the samples. Attributions of rare values are estimated from few occurrences.
 
