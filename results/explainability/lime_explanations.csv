@@ -1,0 +1,80 @@
+case,kind,client,label,p_ransomware,feature,value,weight,local_r2
+1,correct ransomware,1,Ransomware,1.0,ApiCall_476,NtClose,1.375381826060545,0.853
+1,correct ransomware,1,Ransomware,1.0,ApiCall_471,NtClose,0.7680066267620825,0.853
+1,correct ransomware,1,Ransomware,1.0,ApiCall_498,NtOpenKeyEx,0.3086117374241354,0.853
+1,correct ransomware,1,Ransomware,1.0,ApiCall_468,NtClose,0.30381143141467293,0.853
+1,correct ransomware,1,Ransomware,1.0,ApiCall_497,NtQueryKey,0.2873210472761815,0.853
+1,correct ransomware,1,Ransomware,1.0,ApiCall_469,NtOpenKeyEx,0.1955992780007798,0.853
+1,correct ransomware,1,Ransomware,1.0,ApiCall_463,NtClose,0.1585890411467734,0.853
+1,correct ransomware,1,Ransomware,1.0,ApiCall_473,NtOpenKeyEx,0.14776638813582949,0.853
+1,correct ransomware,1,Ransomware,1.0,ApiCall_464,NtOpenKeyEx,0.13032257939309566,0.853
+1,correct ransomware,1,Ransomware,1.0,ApiCall_458,NtClose,0.12616877608452576,0.853
+2,correct ransomware,8,Ransomware,1.0,Mutex_3,Globalcprogramdatamicrosoftehomemcepg20dbsplk2608,0.9445940477029107,0.701
+2,correct ransomware,8,Ransomware,1.0,Mutex_9,Globalcprogramdatamicrosoftehomemcepg20db,0.9160111654752134,0.701
+2,correct ransomware,8,Ransomware,1.0,ApiCall_476,NtClose,0.6102353268604827,0.701
+2,correct ransomware,8,Ransomware,1.0,ApiCall_471,NtClose,0.41915920153818137,0.701
+2,correct ransomware,8,Ransomware,1.0,ApiCall_468,NtClose,0.2523410214505642,0.701
+2,correct ransomware,8,Ransomware,1.0,ApiCall_497,NtQueryKey,0.1874125792186144,0.701
+2,correct ransomware,8,Ransomware,1.0,ApiCall_473,NtOpenKeyEx,0.1645830611964443,0.701
+2,correct ransomware,8,Ransomware,1.0,ApiCall_498,NtOpenKeyEx,0.14583205568284674,0.701
+2,correct ransomware,8,Ransomware,1.0,ApiCall_458,NtClose,0.13290910984969337,0.701
+2,correct ransomware,8,Ransomware,1.0,Mutex_7,GlobalMCStoreSyncMem02004a9f865399b5c2a02973d5e53544ed4ce2ea,0.11276412426536986,0.701
+3,correct benign,5,Benign,0.0,TTP_1,T1083,-2.589118491977752,0.463
+3,correct benign,5,Benign,0.0,TTP_0,T1082,-2.165383740252765,0.463
+3,correct benign,5,Benign,0.0,TTP_3,T1106,-1.5331065170734728,0.463
+3,correct benign,5,Benign,0.0,Dll_6,OLEAUT32dll,-0.9655848411909009,0.463
+3,correct benign,5,Benign,0.0,Dll_5,ole32dll,-0.7677606697820393,0.463
+3,correct benign,5,Benign,0.0,Dll_2,ntdlldll,-0.6080413012387932,0.463
+3,correct benign,5,Benign,0.0,Dll_3,ADVAPI32dll,-0.5671685400637095,0.463
+3,correct benign,5,Benign,0.0,TTP_2,T1105,-0.46277852466071634,0.463
+3,correct benign,5,Benign,0.0,Dll_4,KERNEL32dll,-0.43794504939083573,0.463
+3,correct benign,5,Benign,0.0,Dll_9,RPCRT4dll,0.4013960709898835,0.463
+4,correct benign,5,Benign,0.0,TTP_0,T1083,-7.015072835768745,0.822
+4,correct benign,5,Benign,0.0,TTP_1,T1105,-3.9717570817332137,0.822
+4,correct benign,5,Benign,0.0,Dll_5,ole32dll,-1.8609002014498266,0.822
+4,correct benign,5,Benign,0.0,Dll_7,SHELL32dll,-1.4898014132239166,0.822
+4,correct benign,5,Benign,0.0,Dll_6,OLEAUT32dll,-1.1702420296243947,0.822
+4,correct benign,5,Benign,0.0,Dll_9,VERSIONdll,-0.3587435646296817,0.822
+4,correct benign,5,Benign,0.0,ApiCall_8,RegOpenKeyExW,-0.28342108978577435,0.822
+4,correct benign,5,Benign,0.0,ApiCall_23,LoadStringW,0.20433085526156,0.822
+4,correct benign,5,Benign,0.0,ApiCall_479,LoadStringW,0.19985166329490758,0.822
+4,correct benign,5,Benign,0.0,ApiCall_388,NtClose,0.14009935095138215,0.822
+5,misclassified benign predicted as ransomware,10,Benign,1.0,Mutex_8,LocalRstrMgr3887CAB8533F4C85B0DC3E5639F8D511,4.179127053912027,0.41
+5,misclassified benign predicted as ransomware,10,Benign,1.0,Mutex_7,GlobalCUserscuckoAppDataLocalMicrosoftWindowsExplorerthumbcacheidxdbrwReaderRefs,2.084727790929083,0.41
+5,misclassified benign predicted as ransomware,10,Benign,1.0,Mutex_1,LocalRstrMgr3887CAB8533F4C85B0DC3E5639F8D511Session0000,-1.424944377330692,0.41
+5,misclassified benign predicted as ransomware,10,Benign,1.0,Dll_0,KERNEL32dll,-1.3453980853847654,0.41
+5,misclassified benign predicted as ransomware,10,Benign,1.0,Mutex_6,GlobalCUserscuckoAppDataLocalMicrosoftWindowsExplorerthumbcache32dbdfMaintainer,-1.0089973133288024,0.41
+5,misclassified benign predicted as ransomware,10,Benign,1.0,Dll_1,USER32dll,-0.9637954980728135,0.41
+5,misclassified benign predicted as ransomware,10,Benign,1.0,Mutex_9,GlobalCUserscuckoAppDataLocalMicrosoftWindowsExplorerthumbcacheidxdbrwWriterMutex,-0.6971159274205824,0.41
+5,misclassified benign predicted as ransomware,10,Benign,1.0,TTP_0,T1082,0.4913993314403468,0.41
+5,misclassified benign predicted as ransomware,10,Benign,1.0,Mutex_2,GlobalCUserscuckoAppDataLocalMicrosoftWindowsExplorerthumbcache1024dbdfMaintainer,-0.3559449462303698,0.41
+5,misclassified benign predicted as ransomware,10,Benign,1.0,ApiCall_56,WriteConsoleW,0.3488510492721342,0.41
+6,misclassified benign predicted as ransomware,8,Benign,1.0,Mutex_5,CDBurnNotify,8.159785032135629,0.842
+6,misclassified benign predicted as ransomware,8,Benign,1.0,TTP_0,T1106,-3.2708615007187385,0.842
+6,misclassified benign predicted as ransomware,8,Benign,1.0,Mutex_1,LocalZonesLockedCacheCounterMutex,-1.7039586938565277,0.842
+6,misclassified benign predicted as ransomware,8,Benign,1.0,Mutex_2,GlobalCDBurnExclusive,-0.81454992865793,0.842
+6,misclassified benign predicted as ransomware,8,Benign,1.0,Mutex_0,IECompatMutex,-0.8110738418023752,0.842
+6,misclassified benign predicted as ransomware,8,Benign,1.0,Mutex_6,LocalBrowserEmulationSharedMemoryMutex,-0.43621189837794905,0.842
+6,misclassified benign predicted as ransomware,8,Benign,1.0,Dll_0,kernel32dll,-0.4124229781546133,0.842
+6,misclassified benign predicted as ransomware,8,Benign,1.0,Mutex_3,IsoScope9e4IEEarlyTabStart0x9e8Mutex,-0.31710864270952394,0.842
+6,misclassified benign predicted as ransomware,8,Benign,1.0,Mutex_4,LocalZonesCacheCounterMutex,-0.2760106426888052,0.842
+7,misclassified ransomware predicted as benign,2,Ransomware,0.0,TTP_1,T1106,-16.999996223263622,0.903
+7,misclassified ransomware predicted as benign,2,Ransomware,0.0,TTP_0,T1098,-8.505268808921231,0.903
+7,misclassified ransomware predicted as benign,2,Ransomware,0.0,Mutex_8,Shared,6.817386922103621,0.903
+7,misclassified ransomware predicted as benign,2,Ransomware,0.0,Mutex_2,ConnHashTable2508HashTableMutex,-4.150675554943858,0.903
+7,misclassified ransomware predicted as benign,2,Ransomware,0.0,Mutex_5,SmartScreenUrsCacheMutex2CEDBFBCDBA843AAB1FDCC8E6316E3E2HighS152118371862312022488117003166771000,2.735360461989193,0.903
+7,misclassified ransomware predicted as benign,2,Ransomware,0.0,Mutex_7,Eventing,-1.8358794738654658,0.903
+7,misclassified ransomware predicted as benign,2,Ransomware,0.0,Mutex_0,Localcuserswin7appdatalocalmicrosoftfeeds,-1.6365032758500868,0.903
+7,misclassified ransomware predicted as benign,2,Ransomware,0.0,Dll_3,KERNEL32dll,-1.4026858142405685,0.903
+7,misclassified ransomware predicted as benign,2,Ransomware,0.0,Dll_1,CLUSAPIdll,-0.792223223892276,0.903
+7,misclassified ransomware predicted as benign,2,Ransomware,0.0,Mutex_6,LocalFeed,-0.6711519166087877,0.903
+8,misclassified ransomware predicted as benign,4,Ransomware,0.0,TTP_1,T1106,-22.219560810171377,0.951
+8,misclassified ransomware predicted as benign,4,Ransomware,0.0,TTP_0,T1098,-5.543112450646959,0.951
+8,misclassified ransomware predicted as benign,4,Ransomware,0.0,Mutex_4,GlobalCDBurnExclusive,-1.9667776198412878,0.951
+8,misclassified ransomware predicted as benign,4,Ransomware,0.0,Mutex_3,RasPbFile,1.9474705438188518,0.951
+8,misclassified ransomware predicted as benign,4,Ransomware,0.0,Mutex_5,xXUPDATEXx,1.61648872026181,0.951
+8,misclassified ransomware predicted as benign,4,Ransomware,0.0,Mutex_2,xXBLOCKMOUSEXx,1.3732890704298426,0.951
+8,misclassified ransomware predicted as benign,4,Ransomware,0.0,Mutex_1,xXPASSWORDLISTXx,0.7581965448301415,0.951
+8,misclassified ransomware predicted as benign,4,Ransomware,0.0,Mutex_0,MUTEX,0.42357365106937145,0.951
+8,misclassified ransomware predicted as benign,4,Ransomware,0.0,Mutex_6,CDBurnNotify,-0.38279134299772566,0.951
+8,misclassified ransomware predicted as benign,4,Ransomware,0.0,Dll_3,ADVAPI32dll,-0.28892580169465354,0.951

@@ -1,0 +1,27 @@
+# OS files
+.DS_Store
+Thumbs.db
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+*.log
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Outputs of new training runs (the reported model lives in models/)
+runs/
+*.weights.h5
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Editors and caches
+.vscode/
+.idea/
+.cache/

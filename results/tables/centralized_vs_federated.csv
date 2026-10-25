@@ -1,0 +1,3 @@
+Mode,Accuracy,Precision,Recall,F1-score
+Centralized,99.12,99.10,99.31,99.20
+Federated,99.90,99.22,99.12,99.13

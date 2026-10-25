@@ -1,0 +1,27 @@
+cff-version: 1.2.0
+message: "If you use this code or the TTP-enhanced dataset, please cite the article below."
+title: "RS-FEDRAD: Robust and Scalable Federated Ransomware Detection Using TTP-Enhanced Dataset"
+authors:
+  - family-names: Ali
+    given-names: Chinonso E.
+repository-code: "https://github.com/EmpireNetwork123/RS-FEDRAD-PROJECT"
+license: MIT
+preferred-citation:
+  type: article
+  title: "RS-FEDRAD: Robust and Scalable Federated Ransomware Detection Using TTP-Enhanced Dataset"
+  authors:
+    - family-names: Ali
+      given-names: Chinonso E.
+    - family-names: Lu
+      given-names: Songfeng
+    - family-names: Ruambo
+      given-names: Francis A.
+    - family-names: Tchamini
+      given-names: Francelle
+  journal: "Journal of Information Systems Engineering and Management"
+  volume: 10
+  issue: "43s"
+  start: 876
+  end: 891
+  year: 2025
+  doi: "10.52783/jisem.v10i43s.8490"

@@ -1,0 +1,5 @@
+Strategy,Accuracy,Precision,Recall,F1-score
+FedAvg,99.52,98.54,98.69,98.63
+FedProx,99.32,98.35,98.50,98.43
+FedAvgM,99.22,98.25,98.40,98.34
+FedMedian,99.12,98.15,98.30,98.24

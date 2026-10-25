@@ -1,0 +1,44 @@
+# RS-FEDRAD experimental configuration (values as used in the published study)
+
+data:
+  clients_dir: data/clients
+  num_clients: 10            # the TTP-enhanced dataset is distributed over 10 clients
+  test_size: 0.2             # stratified local hold-out split on every client
+  seed: 42
+
+model:
+  sequence_length: 530       # 500 API calls, 10 DLLs, 10 mutexes, 10 TTPs
+  conv_filters: 64
+  kernel_size: 3
+  pool_size: 2
+  lstm_units: 100
+  dense_units: 64
+  dropout: 0.5
+  learning_rate: 0.001
+
+federated:
+  server_address: "127.0.0.1:8080"
+  num_rounds: 10
+  local_epochs: 10
+  batch_size: 64
+  strategy: fedavg           # fedavg | fedprox | fedavgm | fedmedian
+  proximal_mu: 0.01          # FedProx only
+  server_momentum: 0.9       # FedAvgM only
+
+centralized:
+  epochs: 10
+  batch_size: 64
+
+adversarial:
+  attack: fgsm               # fgsm | bim
+  epsilon: 0.01
+  bim_alpha: 0.005
+  bim_iterations: 10
+
+explainability:
+  model_path: models/rsfedrad_global_round10.h5
+  lime_num_samples: 5000
+  lime_num_features: 10
+  shap_background: 200
+  shap_samples_per_class: 200
+  shap_nsamples: 200

@@ -1,0 +1,3 @@
+Mode,Accuracy,Precision,Recall,F1-score
+Adversarial training,99.64,99.13,99.17,99.15
+Federated,99.90,99.22,99.12,99.13

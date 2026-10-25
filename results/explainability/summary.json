@@ -1,0 +1,15 @@
+{
+  "test_samples": 6030,
+  "misclassified": 48,
+  "false_positives": 24,
+  "false_negatives": 24,
+  "lime_cases": 8,
+  "shap_samples": 400,
+  "shap_completeness_correlation": 0.983,
+  "group_share_of_abs_shap": {
+    "ApiCall": 0.1206,
+    "Dll": 0.1289,
+    "Mutex": 0.221,
+    "TTP": 0.5295
+  }
+}
