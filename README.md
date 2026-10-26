@@ -51,10 +51,10 @@ Techniques are assigned by aligning the API, DLL and mutex events of a sample, s
 
 **Client-side preprocessing.** Every client works only with its own data:
 
-1. it fills empty positions with the most frequent value;
-2. it label-encodes each position;
-3. it scales the codes to [0, 1] and standardises them;
-4. it holds out a stratified 20% split for evaluation.
+1. By first filling its  empty positions with the most frequent value;
+2. The label-encodes each position;
+3. Scales the codes to [0, 1] and standardises them;
+4. Finally,  hold out a stratified 20% split for evaluation.
 
 No vocabulary or statistic leaves the client.
 
@@ -75,7 +75,7 @@ The model is trained with Adam (learning rate 0.001) and binary cross-entropy. T
 
 ## Results
 
-All numbers below are those reported in the article. The per-round results are rebuilt exactly from the original client logs in [`results/logs/federated`](results/logs/federated) by `python -m rsfedrad.aggregate_logs`. In these logs, accuracy is the local accuracy at the end of each round, while precision, recall and F1-score are measured on the client's held-out split; global values are means over the ten clients.
+Our output builds from the client logs in [`results/logs/federated`](results/logs/federated) by `python -m rsfedrad.aggregate_logs`. In these logs, accuracy is the local accuracy at the end of each round, while precision, recall and F1-score are measured on the client's held-out split; global values are means over the ten clients.
 
 ### Federated training (FedAvg, 10 clients)
 
@@ -98,7 +98,7 @@ All numbers below are those reported in the article. The per-round results are r
   <br><em>Performance across the ten federated rounds (Fig. 3 of the article).</em>
 </p>
 
-Repeated training runs give a mean accuracy of 99.507% (SD 0.035), precision 98.539% (SD 0.044), recall 98.695% (SD 0.050), F1-score 98.622% (SD 0.047) and AUC-ROC 99.59% (SD 0.032).
+Evaluations performance achieved a mean accuracy of 99.507% (SD 0.035), precision 98.539% (SD 0.044), recall 98.695% (SD 0.050), F1-score 98.622% (SD 0.047) and AUC-ROC 99.59% (SD 0.032).
 
 ### Aggregation strategies
 
@@ -150,7 +150,7 @@ Comparisons with deep learning and federated detectors from the literature are g
 
 ## Explainability with LIME and SHAP
 
-High detection rates are only useful to an analyst if the reasons behind a decision can be inspected. We therefore explain the global model after ten FedAvg rounds ([`models/rsfedrad_global_round10.h5`](models)) with LIME (Ribeiro et al., 2016) and SHAP (Lundberg and Lee, 2017). We follow the protocol of XRan (Gulmez et al., 2024), whose behavioural traces we extended with ATT&CK techniques: LIME for local explanations of correct and incorrect decisions, and SHAP for location-based and feature-based global explanations. Since RS-FEDRAD adds a TTP block to the sequence, we also measure which share of each decision this block carries, a question XRan could not address.
+High detection rates are only useful to an analyst if the reasons behind a decision can be inspected. Therefore, we explain the global model after ten FedAvg rounds ([`models/rsfedrad_global_round10.h5`](models)) with LIME (Ribeiro et al., 2016) and SHAP (Lundberg and Lee, 2017). We follow the protocol of XRan (Gulmez et al., 2024), whose behavioural traces we extended with ATT&CK techniques: LIME for local explanations of correct and incorrect decisions, and SHAP for location-based and feature-based global explanations. Since RS-FEDRAD adds a TTP block to the sequence, we also measure which share of each decision this block carries, a question XRan didn't address.
 
 **Setup.** The explanations cover the held-out splits of all ten clients (6,030 sequences). The global model misclassifies 48 of them: 24 benign samples flagged as ransomware and 24 missed ransomware samples. Every encoded position is mapped back to its readable value with the client's encoder, and positions that were empty in the raw trace are shown as `<empty>`.
 
@@ -166,7 +166,7 @@ High detection rates are only useful to an analyst if the reasons behind a decis
 | Mutexes | 10 | 22.1% | 0.625 |
 | **TTPs** | 10 | **52.9%** | **1.498** |
 
-The ten TTP positions carry more than half of every decision. A single TTP position is on average about 220 times as influential as a single API position, and the first two technique slots alone account for 29% of the total attribution. This answers the question left open in the RS-FEDRAD study of how the TTP enhancement enters the model's decisions: the technique annotations are the dominant evidence, and mutexes and DLLs come next.
+The ten TTP positions carry more than half of every decision. A single TTP position is on average about 220 times as influential as a single API position, and the first two technique slots alone account for 29% of the total attribution. This answers the question of how the TTP enhancement enters the model's decisions: the technique annotations are the dominant evidence.
 
 Inside the API block, 86% of the attribution falls on the last 70 positions (430 to 499) and almost none on the first 100. This differs from XRan, where the earliest API calls dominated. Two properties of our setting explain it. First, these positions record whether a trace is long enough to reach them. Second, the LSTM reads the sequence from left to right, so events close to the DLL, mutex and TTP blocks lie nearest to its final state.
 
@@ -192,7 +192,7 @@ Inside the API block, 86% of the attribution falls on the last 70 positions (430
 
 T1105 Ingress Tool Transfer, T1083 File and Directory Discovery and T1082 System Information Discovery point to benign software.
 
-The signs agree with the data. In the TTP-enhanced dataset, benign and ransomware samples share only one technique, T1106 Native API, which is common in legitimate software as well. The model has learned this partition of the technique space, and T1106 is accordingly the technique with the most ambiguous role.
+The signs agree with our data. In the TTP-enhanced dataset, benign and ransomware samples share only one technique, T1106 Native API, which is common in legitimate software as well. The model has learned this partition of the technique space, and T1106 is accordingly the technique with the most ambiguous role.
 
 **DLLs, mutexes and API calls.** Among the other features, the strongest ransomware indicators are:
 * **DLLs:** the authentication and security libraries `sechost.dll`, `lsasrv.dll`, `SspiSrv.dll` and `SspiCli.dll`;
@@ -274,8 +274,7 @@ pip install -r requirements.txt
 pip install -e .
 ```
 
-The original experiments ran with Python 3.12, TensorFlow 2 and Flower on a laptop with an Intel Core i7-1165G7 and 32 GB of RAM. This code base has been tested with TensorFlow 2.18 and Flower 1.42.
-
+We conducted this experiment with Python 3.12, TensorFlow 2 and Flower on a laptop with an Intel Core i7-1165G7 and 32 GB of RAM. 
 ## Reproducing the experiments
 
 All commands are run from the repository root.
